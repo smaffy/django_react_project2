@@ -1,8 +1,4 @@
 import React from "react";
-import Cookies from "universal-cookie";
-
-const cookies = new Cookies();
-
 
 class App extends React.Component {
 
@@ -10,6 +6,7 @@ class App extends React.Component {
     super(props);
 
     this.state = {
+      csrf: "",
       username: "",
       password: "",
       error: "",
@@ -21,9 +18,23 @@ class App extends React.Component {
     this.getSession();
   }
 
+  getCSRF = () => {
+    fetch("http://localhost:8000/api/csrf/", {
+      credentials: "include",
+    })
+    .then((res) => {
+      let csrfToken = res.headers.get("X-CSRFToken");
+      this.setState({csrf: csrfToken});
+      console.log(csrfToken);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
   getSession = () => {
-    fetch("/api/session/", {
-      credentials: "same-origin",
+    fetch("http://localhost:8000/api/session/", {
+      credentials: "include",
     })
     .then((res) => res.json())
     .then((data) => {
@@ -32,6 +43,7 @@ class App extends React.Component {
         this.setState({isAuthenticated: true});
       } else {
         this.setState({isAuthenticated: false});
+        this.getCSRF();
       }
     })
     .catch((err) => {
@@ -40,11 +52,11 @@ class App extends React.Component {
   }
 
   whoami = () => {
-    fetch("/api/whoami/", {
+    fetch("http://localhost:8000/api/whoami/", {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "same-origin",
+      credentials: "include",
     })
     .then((res) => res.json())
     .then((data) => {
@@ -73,13 +85,13 @@ class App extends React.Component {
 
   login = (event) => {
     event.preventDefault();
-    fetch("/api/login/", {
+    fetch("http://localhost:8000/api/login/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": cookies.get("csrftoken"),
+        "X-CSRFToken": this.state.csrf,
       },
-      credentials: "same-origin",
+      credentials: "include",
       body: JSON.stringify({username: this.state.username, password: this.state.password}),
     })
     .then(this.isResponseOk)
@@ -94,13 +106,14 @@ class App extends React.Component {
   }
 
   logout = () => {
-    fetch("/api/logout", {
-      credentials: "same-origin",
+    fetch("http://localhost:8000/api/logout", {
+      credentials: "include",
     })
     .then(this.isResponseOk)
     .then((data) => {
       console.log(data);
       this.setState({isAuthenticated: false});
+      this.getCSRF();
     })
     .catch((err) => {
       console.log(err);
