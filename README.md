@@ -1,6 +1,9 @@
-Django(DRF), React(SPA), nginx, Docker 
+second part of project 'django_react_project'
 
-Django DRF + Frontend served separately (same domain)
+Frontend served separately (cross domain)
+
+
+Django(DRF), React(SPA), nginx, Docker 
 
 Authenticate Single-Page Applications (SPAs) with session-based authentication.  
 Using Django for our backend while the frontend will be built with React, a JavaScript library designed for building user interfaces.
@@ -47,6 +50,27 @@ Using Django for our backend while the frontend will be built with React, a Java
 
 
 *****************************
+
+Cookie based authentication, frontend and backend separated, cross origin
+Getting Started
+
+*** now NOT FINISHED!!! need changes in docker 
+
+Run Django:
+
+        $ cd backend
+        $ python3 -m venv venv && source venv/bin/activate
+        (venv)$ pip install -r requirements.txt
+        (venv)$ python manage.py migrate
+        (venv)$ python manage.py runserver
+
+Run React:
+        
+        $ cd frontend
+        $ npm install
+        $ npm start
+
+************************
         $ docker-compose up -d --build
         
         $ docker-compose exec backend python manage.py makemigrations
@@ -58,7 +82,7 @@ Using Django for our backend while the frontend will be built with React, a Java
 
 
 pip install Django
-pip install djangorestframework
+pip install django-cors-headers
 
 npm install universal-cookie
 

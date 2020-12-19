@@ -38,13 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
+    'corsheaders',
 
     # local
     'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -144,21 +145,40 @@ STATICFILES_DIRS = (
 )
 
 
-CSRF_COOKIE_SAMESITE = 'Strict'
-SESSION_COOKIE_SAMESITE = 'Strict'
-CSRF_COOKIE_HTTPONLY = False  # False since we will grab it via universal-cookies
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_HTTPONLY = True
+
 
 # PROD ONLY
 # CSRF_COOKIE_SECURE = True
 # SESSION_COOKIE_SECURE = True
 
 # Notes:
-# Setting CSRF_COOKIE_SAMESITE and SESSION_COOKIE_SAMESITE to True prevents cookies and CSRF tokens
-# from being sent from any external requests.
 #
-# Setting CSRF_COOKIE_HTTPONLY and SESSION_COOKIE_HTTPONLY to True blocks client-side JavaScript from accessing the CSRF
-# and session cookies. We set CSRF_COOKIE_HTTPONLY to False since we'll be accessing the cookie via JavaScript.
+#     Setting CSRF_COOKIE_SAMESITE and SESSION_COOKIE_SAMESITE to Lax allows us to send CSRF cookies in external requests.
+#     Enabling CSRF_COOKIE_HTTPONLY and SESSION_COOKIE_HTTPONLY blocks client-side JavaScript from accessing the CSRF
+#           and session cookies.
 #
-# If you're in production, you should serve your website over HTTPS and enable CSRF_COOKIE_SECURE and SESSION_COOKIE_SECURE,' \
-#  which will only allow the cookies to be sent over HTTPS.
+#     If you're in production, you should serve your website over HTTPS and enable CSRF_COOKIE_SECURE and
+#           SESSION_COOKIE_SECURE, which will only allow the cookies to be sent over HTTPS.
+
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://0.0.0.0:3000',
+]
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+CORS_ALLOW_CREDENTIALS = True
+
+
+# Notes:
+#
+#     We set the allowed origins in the CORS_ALLOWED_ORIGINS list. It's worth noting that for testing purposes,
+#           instead of using the CORS_ALLOWED_ORIGINS setting, you could instead set CORS_ALLOW_ALL_ORIGIN to True in order
+#           to allow any origin to make requests. Do not use this in production, though.
+#     CORS_EXPOSE_HEADERS is a list of HTTP headers that are exposed to the browser.
+#     Setting CORS_ALLOW_CREDENTIALS to True allows cookies to be sent along with cross-origin requests.
+
