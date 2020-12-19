@@ -1,0 +1,19 @@
+# Project exclude paths
+/venv/
+/env/
+
+/.idea
+
+#/media/uploads/
+#/media/cache/
+#/media/blog_posts/
+/static/
+/staticfiles/
+
+*.pyc
+__pycache
+/Pipfile
+/Pipfile.lock
+db.sqlite3
+
+/frontend/node_modules/
